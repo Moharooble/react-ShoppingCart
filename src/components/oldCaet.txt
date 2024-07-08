@@ -1,0 +1,183 @@
+                <div className="cart_item">
+                    
+                    
+                    <img src={product.urlImage} alt="" id="product_image" srcSet="" />
+                    <h4 className="product_name">{product.name}</h4>
+                    <a  className="btn_small" action="desrease">-</a>
+                    <h4 className="product_quantity">1</h4>
+                    <a  className="btn_small" action="insrease">+</a>
+                    <span className="product_price">${product.price}</span>
+                    <a  className="btn_small btn_remove" onClick={() => removeCart(product)}>&times;</a>
+                </div>
+
+
+                import { useEffect, useState } from "react";
+import useShop from "../ShopContext";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+const Payment = () => {
+  const { products, total, clearCart } = useShop();
+
+  const initialPayment = {
+    evc: false,
+    zaad: false,
+    sahal: false,
+  };
+  const [paymentMethod, setPaymentMethod] = useState(initialPayment);
+
+  const [updated, setUpdated] = useState(false);
+  const [code, setCode] = useState("");
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const fullPhone = { code, phone };
+
+  useEffect(() => {
+    console.log(fullPhone);
+  }, [code, phone]);
+
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod({ ...initialPayment, [method]: true });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (paymentMethod.zaad) {
+      setCode("25263");
+    } else if (paymentMethod.evc) {
+      setCode("25261");
+    } else if (paymentMethod.sahal) {
+      setCode("25290");
+    }
+
+    if (!phone || !code) {
+      return toast.error("Phone number is empty");
+    }
+
+    processPayment();
+  };
+
+  const processPayment = async () => {
+    try {
+      const body = {
+        schemaVersion: "1.0",
+        requestId: "10111331033",
+        timestamp: 1590587436057686,
+        channelName: "WEB",
+        serviceName: "API_PURCHASE",
+        serviceParams: {
+          merchantUid: process.env.REACT_APP_MERCHANT_U_ID,
+          apiUserId: process.env.REACT_APP_MERCHANT_API_USER_ID,
+          apiKey: process.env.REACT_APP_MERCHANT_API_KEY,
+          paymentMethod: "mwallet_account",
+          payerInfo: {
+            accountNo: phone,
+          },
+          transactionInfo: {
+            referenceId: "12334",
+            invoiceId: "7896504",
+            amount: total,
+            currency: "USD",
+            description: "React Shopping Cart",
+          },
+        },
+      };
+      setLoading(true);
+
+      const { data } = await axios.post("https://api.waafi.com/asm", body);
+
+      setLoading(false);
+
+      const info = data.responseMsg.split("ERRCODE");
+      if (info.length === 1) {
+        setUpdated(!updated);
+        alert("Successfully ordered");
+        clearCart();
+      } else {
+        if (data.responseMsg.split("ERRCODE")[2].includes("4004")) {
+          alert("User rejected");
+          setUpdated(!updated);
+        }
+
+        if (data.responseMsg.split("ERRCODE")[2].includes("6002")) {
+          alert("Numberka sirta ah waa khalad");
+          setUpdated(!updated);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  if (products.length <= 0) return <h2></h2>;
+
+  return (
+    <div>
+      <div className="payment-cards">
+        <h2>Pay With</h2>
+        <div
+          className={`payment-card ${paymentMethod.zaad && "selected"}`}
+          onClick={() => handlePaymentMethodChange("zaad")}
+        >
+          <h3>Zaad Service</h3>
+        </div>
+        <div
+          className={`payment-card ${paymentMethod.evc && "selected"}`}
+          onClick={() => handlePaymentMethodChange("evc")}
+        >
+          <h3>Evc Plus</h3>
+        </div>
+        <div
+          className={`payment-card ${paymentMethod.sahal && "selected"}`}
+          onClick={() => handlePaymentMethodChange("sahal")}
+        >
+          <h3>Sahal</h3>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="inputs">
+            {paymentMethod.zaad && (
+              <input
+                type="text"
+                value={"25263"}
+                className="codes"
+                placeholder="25263"
+                readOnly
+              />
+            )}
+            {paymentMethod.evc && (
+              <input
+                type="text"
+                value={"25261"}
+                className="codes"
+                placeholder="25261"
+                readOnly
+              />
+            )}
+            {paymentMethod.sahal && (
+              <input
+                type="text"
+                value={"25290"}
+                className="codes"
+                placeholder="25290"
+                readOnly
+              />
+            )}
+            <input
+              type="text"
+              className="form-control"
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your phone number"
+            />
+          </div>
+          <button className={loading ? "loading" : "btn-proceed"}>
+            {loading ? "Loading..." : "Pay Now"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Payment;
