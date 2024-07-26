@@ -348,3 +348,31 @@ button:hover {
     cursor: no-drop;
   }
 
+  @media screen and (max-width: 800px) {
+    .products{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .cart_page{
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    
+  }
+  @media screen and (max-width: 500px) {
+    .products{
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    .menu{
+      display: grid;
+      grid-template-columns: 3fr 1fr 3fr;
+    }
+    .menu-items{
+      margin: 0 10px;
+      gap: 10px;
+    }
+
+    
+  }
+
