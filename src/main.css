@@ -263,16 +263,6 @@ button:hover {
     justify-content: center;
     padding: 10px;
   }
-  
-  /* .total_cost{
-    position: relative;
-    top: 80%;
-    left: 3%;
-    
-  } */
-
-
-  
 
   .paymet-cards{
     width: 100%;
@@ -281,6 +271,7 @@ button:hover {
 
   }
   .payment-card {
+    position: relative;
     border: 1px solid #ccc;
     border-radius: 15px;
     padding: 10px;
@@ -289,12 +280,34 @@ button:hover {
     text-align: center;
     
   }
+  .check_icon{
+    display: none;
+    position: absolute;
+    font-size: 20px;
+    top: -7px;
+    right: -10px;
+    color: rgb(8, 165, 34);
+    border: none;
+    border-radius: 50%;
+  }
+  .check_selected {
+    display: block;
+  }
+  .payment-card::before{
+    content: "";
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ffffff;
+    top: -5px;
+    right: -8px;
+  }
+
  
   
-  .payment-card:hover,
   .payment-card.selected {
-    background-color: rgba(24, 118, 201, 0.159);
-    border-color: rgb(8, 92, 165);
+    border: solid 3px rgb(8, 165, 34);
   }
   .inputs {
     width: 100%;
@@ -314,9 +327,11 @@ button:hover {
     color: #28a745;
   }
   .codes {
+    display: flex;
+    text-align: center;
     width: 35%;
     margin: 8px;
-    padding:  15px;
+    padding:  5px;
     border: 1px solid #ccc;
     border-radius: 15px;
     font-size: 20px;

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import useShop from "../ShopContext";
 import axios from "axios"
 import toast from "react-hot-toast";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+
 
 const Payment = () => {
 	const {total,clearCart} = useShop();
@@ -122,16 +124,21 @@ const Payment = () => {
 					className={`payment-card ${paymentMethod.zaad && "selected"}`}
 					onClick={() => setPaymentMethod({ zaad: true })}>
 					<h3>Zaad Service</h3>
+					<IoIosCheckmarkCircle className={`check_icon ${paymentMethod.zaad && "check_selected"}`}/>
+
 				</div>
 				<div
 					className={`payment-card ${paymentMethod.evc && "selected"}`}
 					onClick={() => setPaymentMethod({  evc: true })}>
 					<h3>Evc Plus</h3>
+					<IoIosCheckmarkCircle className={`check_icon ${paymentMethod.evc && "check_selected"}`}/>
+					
 				</div>
 				<div
 					className={`payment-card ${paymentMethod.sahal && "selected"}`}
 					onClick={() => setPaymentMethod({sahal: true })}>
 					<h3>Sahal</h3>
+					<IoIosCheckmarkCircle className={`check_icon ${paymentMethod.sahal && "check_selected"}`}/>
 				</div>
 
 				<form onSubmit={handSubmit}>
